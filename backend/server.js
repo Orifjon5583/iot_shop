@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const { connectDB, prisma } = require('./config/db');
 const logger     = require('./utils/logger');
 const { generalLimiter } = require('./middleware/rateLimiter');
+const { securityShield } = require('./middleware/securityGuard');
 
 const authRoutes    = require('./routes/authRoutes');
 const orderRoutes   = require('./routes/orderRoutes');
@@ -74,7 +75,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ─── 7. HPP ──────────────────────────────────────────────────────────────────
 app.use(hpp());
 
-// ─── 8. Rate limiting ────────────────────────────────────────────────────────
+// ─── 8. Cyber Security Shield (Auto-Ban & DDoS Protection) ─────────────────
+app.use('/api/', securityShield);
 app.use('/api/', generalLimiter);
 
 // ─── 9. Session (Passport uchun) ─────────────────────────────────────────────
