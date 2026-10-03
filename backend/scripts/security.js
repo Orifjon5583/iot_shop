@@ -24,16 +24,17 @@ if (action === 'list') {
   const now = Date.now();
   const list = Object.entries(data).filter(([_, ban]) => ban.bannedUntil > now);
 
-  console.log('\n--- Hozirda Bloklangan IP lar ro\'yxati ---');
+  console.log('\n--- Hozirda Bloklangan IP lar va Qurilmalar ro\'yxati ---');
   if (list.length === 0) {
-    console.log('Hech qanday IP bloklanmagan.');
+    console.log('Hech qanday IP yoki qurilma bloklanmagan.');
   } else {
     list.forEach(([ip, ban]) => {
-      const remainingMin = Math.ceil((ban.bannedUntil - now) / 60000);
-      console.log(`IP: ${ip} | Sabab: ${ban.reason} | Qolgan vaqt: ${remainingMin} daqiqa | Blok muddati: ${new Date(ban.bannedUntil).toLocaleString()}`);
+      const remainingHours = Math.ceil((ban.bannedUntil - now) / 3600000);
+      const remainingDays = (remainingHours / 24).toFixed(1);
+      console.log(`IP: ${ip} | Qurilma ID: ${ban.deviceFingerprint || 'N/A'} | Sabab: ${ban.reason} | Qolgan vaqt: ~${remainingHours} soat (${remainingDays} kun) | Blok muddati: ${new Date(ban.bannedUntil).toLocaleString()}`);
     });
   }
-  console.log('-------------------------------------------\n');
+  console.log('----------------------------------------------------------\n');
 } else if (action === 'unban') {
   if (!targetIp) {
     console.log('Iltimos, IP manzilni kiriting: node scripts/security.js unban <IP_MANZIL>');
@@ -49,26 +50,26 @@ if (action === 'list') {
   }
 } else if (action === 'ban') {
   if (!targetIp) {
-    console.log('Iltimos, IP manzilni kiriting: node scripts/security.js ban <IP_MANZIL> [minutlar]');
+    console.log('Iltimos, IP manzilni kiriting: node scripts/security.js ban <IP_MANZIL> [soatlar]');
     process.exit(1);
   }
-  const minutes = parseInt(process.argv[4] || '5', 10);
+  const hours = parseFloat(process.argv[4] || '48');
   const data = loadData();
   const now = Date.now();
   data[targetIp] = {
     ip: targetIp,
     bannedAt: now,
-    bannedUntil: now + minutes * 60 * 1000,
+    bannedUntil: now + hours * 60 * 60 * 1000,
     reason: 'Admin tomonidan qo\'lda bloklandi',
-    violations: 99,
+    status: 'MANUAL_BAN',
   };
   saveData(data);
-  console.log(`[MUVAFFAQIYATLI] ${targetIp} ${minutes} minutga bloklandi!`);
+  console.log(`[MUVAFFAQIYATLI] ${targetIp} ${hours} soatga (${(hours/24).toFixed(1)} kun) bloklandi!`);
 } else {
   console.log(`
 Kiberxavfsizlik boshqaruv buyruqlari:
   node scripts/security.js list              - Barcha bloklangan IP larni ko'rish
   node scripts/security.js unban <IP>        - IP ni blokdan chiqarish
-  node scripts/security.js ban <IP> [minut]  - IP ni qo'lda bloklash
+  node scripts/security.js ban <IP> [soat]   - IP ni qo'lda bloklash (standart: 48 soat)
   `);
 }

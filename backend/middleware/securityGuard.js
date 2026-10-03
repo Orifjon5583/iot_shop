@@ -1,21 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const logger = require('../utils/logger');
 
 const BLACKLIST_FILE = path.join(__dirname, '..', 'config', 'ip_blacklist.json');
 
-// Xavfsizlik sozlamalari
+// Qat'iy Kiberxavfsizlik sozlamalari
 const CONFIG = {
-  WINDOW_MS: 60 * 1000,           // 1 daqiqalik darcha
-  MAX_REQUESTS_PER_WINDOW: 80,    // 1 daqiqada 80 tadan ortiq so'rov bo'lsa
-  POST_WINDOW_MS: 30 * 1000,      // POST so'rovlar uchun 30 soniya
-  MAX_POST_REQUESTS: 15,          // 30 soniyada 15 tadan ortiq POST (spam-click)
-  TEMP_BAN_MS: 5 * 60 * 1000,     // 1-bosqich: 5 minut blok
-  LONG_BAN_MS: 48 * 60 * 60 * 1000, // 2-bosqich: 2 kun (48 soat) blok
-  MAX_TEMP_BANS_BEFORE_LONG: 2,   // 2 marta 5 minutlik blok olgach, 2 kunga o'tadi
+  WINDOW_MS: 60 * 1000,             // 1 daqiqalik darcha
+  MAX_REQUESTS_PER_WINDOW: 70,      // 1 daqiqada 70 tadan ortiq so'rov
+  POST_WINDOW_MS: 30 * 1000,        // POST so'rovlar uchun 30 soniya
+  MAX_POST_REQUESTS: 12,            // 30 soniyada 12 tadan ortiq POST (spam-click)
+  BAN_DURATION_MS: 48 * 60 * 60 * 1000, // Qat'iy blok: 2 kun (48 soat) davomida aslo ochilmaydi!
 };
 
-// Xotiradagi ma'lumotlar
+// Xotiradagi monitoring
 const ipTracking = new Map();
 let persistentBlacklist = new Map();
 
@@ -52,11 +51,11 @@ const saveBlacklist = () => {
 
 loadBlacklist();
 
-// Har 10 daqiqada xotirani tozalash
+// Har 30 daqiqada eski ma'lumotlarni tozalash (faqat 2 kun to'liq o'tgan bo'lsa)
 setInterval(() => {
   const now = Date.now();
   for (const [ip, data] of ipTracking.entries()) {
-    if (now - data.lastSeen > 2 * 60 * 60 * 1000) {
+    if (now - data.lastSeen > 24 * 60 * 60 * 1000) {
       ipTracking.delete(ip);
     }
   }
@@ -66,9 +65,9 @@ setInterval(() => {
     }
   }
   saveBlacklist();
-}, 10 * 60 * 1000);
+}, 30 * 60 * 1000);
 
-// Haqiqiy mijoz IP manzilini aniqlash (Cloudflare, Nginx, Proxy hisobga olingan)
+// Haqiqiy mijoz IP manzilini aniqlash
 const getClientIp = (req) => {
   const forwarded = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'];
   if (forwarded) {
@@ -77,13 +76,21 @@ const getClientIp = (req) => {
   return req.ip || req.connection?.remoteAddress || '127.0.0.1';
 };
 
-// Oq ro'yxat (Whitelist) - local testlar bloklanmasligi uchun
+// Qurilma raqamli izi (Fingerprint: IP + User-Agent + Accept-Language)
+const getDeviceFingerprint = (req, ip) => {
+  const ua = req.headers['user-agent'] || 'unknown';
+  const lang = req.headers['accept-language'] || '';
+  return crypto.createHash('sha256').update(`${ip}-${ua}-${lang}`).digest('hex').substring(0, 16);
+};
+
+// Oq ro'yxat (Whitelist) - faqat local server testlar uchun
 const isWhitelisted = (ip) => {
   return ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
 };
 
 /**
- * Kiberxavfsizlik va Anti-Abuse Shield Middleware
+ * Qat'iy Kiberxavfsizlik Shield Middleware
+ * (5 minutda ochilmaydi! 2 kunga to'liq bloklanadi va faqat admin ochishi mumkin)
  */
 const securityShield = (req, res, next) => {
   const ip = getClientIp(req);
@@ -93,36 +100,30 @@ const securityShield = (req, res, next) => {
     return next();
   }
 
-  // 1. IP uzoq muddatli yoki vaqtinchalik bloklanganmi tekshirish
+  // 1. IP yoki qurilma bloklanganmi tekshirish
   const banInfo = persistentBlacklist.get(ip);
   if (banInfo && banInfo.bannedUntil > now) {
-    const remainingSeconds = Math.ceil((banInfo.bannedUntil - now) / 1000);
-    const remainingMinutes = Math.ceil(remainingSeconds / 60);
-    const isLongBan = (banInfo.bannedUntil - now) > CONFIG.TEMP_BAN_MS;
+    const remainingHours = Math.ceil((banInfo.bannedUntil - now) / (60 * 60 * 1000));
+    const remainingDays = (remainingHours / 24).toFixed(1);
 
-    logger.warn(`[BLOCKED_REQUEST] Bloklangan IP dan so'rov qaytarildi`, {
+    logger.warn(`[BLOCKED_REQUEST_DENIED] Bloklangan IP dan harakat to'xtatildi`, {
       ip,
+      device: banInfo.deviceFingerprint,
       path: req.path,
       method: req.method,
-      remainingMinutes,
+      remainingHours,
     });
 
-    return res.status(429).json({
+    return res.status(403).json({
       success: false,
-      error: 'SECURITY_ACCESS_RESTRICTED',
-      message: isLongBan
-        ? `Xavfsizlik tizimi: Ko'p sonli hujum / shubhali faollik sababli IP manzilingiz 2 kunga bloklangan. Qolgan vaqt: taxminan ${remainingMinutes} daqiqa.`
-        : `Xavfsizlik tizimi: Qayta-qayta so'rov yuborganingiz sababli IP manzilingiz 5 daqiqaga vaqtincha bloklandi. Qolgan vaqt: ${remainingSeconds} soniya.`,
-      remainingSeconds,
+      error: 'ACCESS_COMPLETELY_BLOCKED',
+      message: `Xavfsizlik tizimi: Ushbu IP manzil va qurilma qoidabuzarlik (spam/hujum) sababli 2 kunga to'liq bloklangan. Tizim avtomatik ochilmaydi. Qolgan vaqt: taxminan ${remainingHours} soat (${remainingDays} kun).`,
       bannedUntil: new Date(banInfo.bannedUntil).toISOString(),
     });
-  } else if (banInfo && banInfo.bannedUntil <= now) {
-    // Blok muddati tugagan bo'lsa, ro'yxatdan chiqarish
-    persistentBlacklist.delete(ip);
-    saveBlacklist();
   }
 
   // 2. IP faolligini monitoring qilish
+  const deviceFp = getDeviceFingerprint(req, ip);
   let tracking = ipTracking.get(ip);
   if (!tracking) {
     tracking = {
@@ -130,7 +131,7 @@ const securityShield = (req, res, next) => {
       requests: 0,
       postWindowStart: now,
       postRequests: 0,
-      violations: 0,
+      deviceFingerprint: deviceFp,
       lastSeen: now,
     };
     ipTracking.set(ip, tracking);
@@ -138,7 +139,7 @@ const securityShield = (req, res, next) => {
 
   tracking.lastSeen = now;
 
-  // 1 daqiqalik darchani tekshirish
+  // 1 daqiqalik umumiy so'rovlar darchasi
   if (now - tracking.windowStart > CONFIG.WINDOW_MS) {
     tracking.windowStart = now;
     tracking.requests = 1;
@@ -146,7 +147,7 @@ const securityShield = (req, res, next) => {
     tracking.requests += 1;
   }
 
-  // POST so'rovlar darchasini tekshirish (qayta-qayta bosishdan himoya)
+  // POST so'rovlar darchasi (tugmalarni qayta-qayta bosishdan qat'iy himoya)
   if (req.method === 'POST') {
     if (now - tracking.postWindowStart > CONFIG.POST_WINDOW_MS) {
       tracking.postWindowStart = now;
@@ -156,48 +157,39 @@ const securityShield = (req, res, next) => {
     }
   }
 
-  // Chegaralarni tekshirish: umumiy so'rovlar yoki POST spam
+  // Chegaralarni tekshirish
   const exceededGeneral = tracking.requests > CONFIG.MAX_REQUESTS_PER_WINDOW;
   const exceededPost = tracking.postRequests > CONFIG.MAX_POST_REQUESTS;
 
   if (exceededGeneral || exceededPost) {
-    tracking.violations += 1;
-    let banDuration = CONFIG.TEMP_BAN_MS;
-    let reason = exceededPost ? 'Tugmalarni ketma-ket bosish (POST Flood)' : 'Haddan ortiq tez so\'rovlar (General Flood)';
+    const reason = exceededPost
+      ? 'Tugmalarni qayta-qayta bosish (POST Spam / Flood)'
+      : 'Haddan ortiq ko\'p so\'rovlar (General Request Flood)';
 
-    // Agar avval ham qoidabuzarlik qilgan bo'lsa -> 2 kunga bloklash
-    if (tracking.violations > CONFIG.MAX_TEMP_BANS_BEFORE_LONG) {
-      banDuration = CONFIG.LONG_BAN_MS;
-      reason += ' [Takroriy hujum - 2 kunlik jazo]';
-    }
+    const bannedUntil = now + CONFIG.BAN_DURATION_MS; // To'liq 48 soat (2 kun) blok!
 
-    const bannedUntil = now + banDuration;
     persistentBlacklist.set(ip, {
       ip,
+      deviceFingerprint: deviceFp,
       bannedAt: now,
       bannedUntil,
       reason,
-      violations: tracking.violations,
+      status: 'HARD_BANNED_2_DAYS',
     });
     saveBlacklist();
 
-    const remainingSeconds = Math.ceil(banDuration / 1000);
-    const isLongBan = banDuration > CONFIG.TEMP_BAN_MS;
-
-    logger.error(`[SECURITY_BAN] IP bloklandi: ${ip}`, {
+    logger.error(`[HARD_SECURITY_BAN] IP va qurilma 2 kunga bloklandi: ${ip}`, {
       ip,
+      device: deviceFp,
       reason,
-      duration: isLongBan ? '48 soat' : '5 daqiqa',
+      duration: '48 soat (2 kun)',
       path: req.path,
     });
 
-    return res.status(429).json({
+    return res.status(403).json({
       success: false,
-      error: 'SECURITY_ACCESS_RESTRICTED',
-      message: isLongBan
-        ? `Xavfsizlik tizimi: Shubhali faollik sababli IP manzilingiz 2 kunga bloklandi.`
-        : `Xavfsizlik tizimi: Haddan ortiq ko'p bosish va so'rovlar sababli IP manzilingiz 5 daqiqaga bloklandi. 5 daqiqadan so'ng tizim avtomatik ochiladi.`,
-      remainingSeconds,
+      error: 'ACCESS_COMPLETELY_BLOCKED',
+      message: `Xavfsizlik tizimi: Haddan ortiq ko'p bosish va so'rovlar aniqlandi! Ushbu IP manzil va qurilma 2 kunga to'liq bloklandi va avtomatik ochilmaydi.`,
       bannedUntil: new Date(bannedUntil).toISOString(),
     });
   }
@@ -206,7 +198,7 @@ const securityShield = (req, res, next) => {
 };
 
 /**
- * Admin uchun IP blokdan chiqarish funksiyasi
+ * Faqat Administrator qo'lda ochishi uchun
  */
 const unbanIp = (ipToUnban) => {
   if (persistentBlacklist.has(ipToUnban)) {
@@ -230,9 +222,9 @@ const getBannedIps = () => {
     if (data.bannedUntil > now) {
       list.push({
         ip,
+        device: data.deviceFingerprint,
         reason: data.reason,
-        violations: data.violations,
-        remainingMinutes: Math.ceil((data.bannedUntil - now) / 60000),
+        remainingHours: Math.ceil((data.bannedUntil - now) / 3600000),
         bannedUntil: new Date(data.bannedUntil).toISOString(),
       });
     }
