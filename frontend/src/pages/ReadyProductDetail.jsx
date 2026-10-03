@@ -149,11 +149,11 @@ export default function ReadyProductDetail() {
           "sku": product.id,
           "brand": {
             "@type": "Brand",
-            "name": product.supplier || "XonTeam"
+            "name": product.supplier || "Elektronikachi"
           },
           "offers": {
             "@type": "Offer",
-            "url": `https://market.xonteam.uz/ready-products/${product.id}`,
+            "url": typeof window !== 'undefined' ? `${window.location.origin}/ready-products/${product.id}` : `/ready-products/${product.id}`,
             "priceCurrency": "UZS",
             "price": product.price,
             "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",

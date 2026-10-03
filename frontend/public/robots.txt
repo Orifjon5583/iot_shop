@@ -3,4 +3,4 @@ Allow: /
 Disallow: /checkout
 Disallow: /profile
 
-Sitemap: https://market.xonteam.uz/api/sitemap.xml
+Sitemap: /api/sitemap.xml

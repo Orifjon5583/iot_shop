@@ -88,11 +88,29 @@ export default function Navbar({ onAuthClick, transparent = true }) {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <MapPin size={12} className="text-teal shrink-0" />
-            {STORE.region}, {STORE.city}
+            {STORE.region}
           </span>
           <a href={`tel:${STORE.phone.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
             <Phone size={12} className="text-teal shrink-0" />
             {STORE.phone}
+          </a>
+          <span className="text-white/20">|</span>
+          <a href={`tel:${STORE.phone2.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
+            <Phone size={12} className="text-teal shrink-0" />
+            {STORE.phone2}
+          </a>
+        </div>
+        <div className="flex items-center gap-3 text-white/65">
+          <a href={STORE.telegram} target="_blank" rel="noopener noreferrer" className="hover:text-teal transition-colors">
+            Telegram
+          </a>
+          <span className="text-white/20">•</span>
+          <a href={STORE.telegramAdmin} target="_blank" rel="noopener noreferrer" className="hover:text-teal transition-colors">
+            Admin ({STORE.telegramAdminUsername})
+          </a>
+          <span className="text-white/20">•</span>
+          <a href={STORE.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
+            Instagram
           </a>
         </div>
       </div>
@@ -103,7 +121,7 @@ export default function Navbar({ onAuthClick, transparent = true }) {
       >
         <Link to="/" className="flex items-center gap-2.5 mr-1 flex-shrink-0">
           <div className="relative w-11 h-11 rounded-[14px] overflow-hidden shadow-[0_0_20px_rgba(79,70,229,0.2)] flex-shrink-0">
-            <img src="/logo.jpg" alt="XonTech Logo" className="w-full h-full object-cover" />
+            <img src="/logo.png" alt="Elektronikachi Logo" className="w-full h-full object-cover" onError={(e) => { e.target.src = '/logo.jpg' }} />
           </div>
             <div className="hidden sm:block">
               <div className="text-white font-display font-bold text-[15px] bg-gradient-to-r from-white to-white/80 bg-clip-text">{t('brand.title')}</div>

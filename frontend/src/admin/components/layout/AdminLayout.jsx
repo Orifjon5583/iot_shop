@@ -51,7 +51,7 @@ export default function AdminLayout() {
           <div className="al-logo">
             <div className="al-logo-icon"><Zap size={18} /></div>
             <div className="al-logo-text">
-              <div className="al-logo-title">IoT Market</div>
+              <div className="al-logo-title">Elektronikachi</div>
               <div className="al-logo-sub">Admin Panel</div>
             </div>
           </div>

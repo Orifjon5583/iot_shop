@@ -51,7 +51,7 @@ export default function Login() {
             <Zap size={22} color="#fff" />
           </div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-primary)' }}>IoT Market</div>
+            <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-primary)' }}>Elektronikachi</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>Admin Panel</div>
           </div>
         </div>

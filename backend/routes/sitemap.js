@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
       select: { id: true, slug: true },
     });
 
-    const baseUrl = 'https://market.xonteam.uz';
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 

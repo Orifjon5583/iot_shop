@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Mail } from 'lucide-react'
+import { MapPin, Phone, Mail, Send, Instagram, UserCheck } from 'lucide-react'
 import { STORE } from '../data/store'
 import { useTheme } from '../context/ThemeContext'
 
@@ -18,16 +18,16 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white font-display font-bold text-sm shadow-lg">
-                IoT
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white font-display font-bold text-sm shadow-lg overflow-hidden">
+                <img src="/logo.png" alt={STORE.name} className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none' }} />
               </div>
               <div>
-                <div className="text-white font-display font-semibold">{t('brand.title')}</div>
+                <div className="text-white font-display font-semibold">{t('brand.title', STORE.name)}</div>
                 <div className="text-white/40 text-xs">{t('brand.tagline')}</div>
               </div>
             </div>
             <p className="text-white/50 text-sm leading-relaxed">
-              {STORE.region}, {STORE.city} — {t('footer.region_desc')}.
+              {STORE.address} — {t('footer.region_desc')}.
             </p>
           </div>
 
@@ -61,11 +61,15 @@ export default function Footer() {
             <div className="space-y-3 text-white/50 text-sm">
               <div className="flex items-start gap-2">
                 <MapPin size={14} className="text-teal shrink-0 mt-0.5" />
-                <span>{t('footer.address')}</span>
+                <span>{t('footer.address', STORE.address)}</span>
               </div>
               <a href={`tel:${STORE.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone size={14} className="text-teal shrink-0" />
-                {t('footer.phone')}
+                {STORE.phone}
+              </a>
+              <a href={`tel:${STORE.phone2.replace(/\s/g, '')}`} className="flex items-center gap-2 hover:text-white transition-colors">
+                <Phone size={14} className="text-teal shrink-0" />
+                {STORE.phone2}
               </a>
               <a href={`mailto:${STORE.email}`} className="flex items-center gap-2 hover:text-white transition-colors">
                 <Mail size={14} className="text-teal shrink-0" />
@@ -77,18 +81,38 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/40 text-sm">© {new Date().getFullYear()} IoT Market. {t('footer.rights')}.</p>
-          <div className="flex gap-3">
-            {['Telegram', 'Instagram', 'YouTube'].map((s) => (
-              <motion.a
-                key={s}
-                href="#"
-                whileHover={{ scale: 1.08, y: -2 }}
-                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 border border-white/15 text-white/60 hover:text-white hover:border-white/30 text-xs font-bold transition-colors"
-              >
-                {s[0]}
-              </motion.a>
-            ))}
+          <p className="text-white/40 text-sm">© {new Date().getFullYear()} {STORE.name}. {t('footer.rights')}.</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <motion.a
+              href={STORE.telegram}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="px-3.5 py-1.5 flex items-center gap-2 rounded-xl bg-white/10 border border-white/15 text-white/70 hover:text-white hover:border-teal/50 text-xs font-semibold transition-all"
+            >
+              <Send size={13} className="text-teal" />
+              <span>Telegram Kanal</span>
+            </motion.a>
+            <motion.a
+              href={STORE.telegramAdmin}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="px-3.5 py-1.5 flex items-center gap-2 rounded-xl bg-white/10 border border-white/15 text-white/70 hover:text-white hover:border-teal/50 text-xs font-semibold transition-all"
+            >
+              <UserCheck size={13} className="text-teal" />
+              <span>Admin: {STORE.telegramAdminUsername}</span>
+            </motion.a>
+            <motion.a
+              href={STORE.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="px-3.5 py-1.5 flex items-center gap-2 rounded-xl bg-white/10 border border-white/15 text-white/70 hover:text-white hover:border-pink-500/50 text-xs font-semibold transition-all"
+            >
+              <Instagram size={13} className="text-pink-400" />
+              <span>@{STORE.instagramUsername}</span>
+            </motion.a>
           </div>
         </div>
       </div>

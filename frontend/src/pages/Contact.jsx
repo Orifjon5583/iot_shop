@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { usePersistedState } from '../hooks/usePersistedState'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle, Navigation, Car, Footprints } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, Navigation, Car, Footprints, MessageSquare, Instagram, UserCheck } from 'lucide-react'
 import StoreMap from '../components/map/StoreMap'
 import Chat247 from '../components/contact/Chat247'
 import { STORE } from '../data/store'
@@ -68,8 +68,11 @@ export default function Contact() {
 
   const items = [
     { icon: MapPin, title: t('contact.address'), value: STORE.address },
-    { icon: Phone, title: t('contact.phone'), value: STORE.phone, href: `tel:${STORE.phone.replace(/\s/g, '')}` },
-    { icon: Mail, title: t('contact.email'), value: STORE.email, href: `mailto:${STORE.email}` },
+    { icon: Phone, title: `${t('contact.phone')} 1`, value: STORE.phone, href: `tel:${STORE.phone.replace(/\s/g, '')}` },
+    { icon: Phone, title: `${t('contact.phone')} 2`, value: STORE.phone2, href: `tel:${STORE.phone2.replace(/\s/g, '')}` },
+    { icon: MessageSquare, title: 'Telegram Kanal', value: 't.me/elektronikachi_uz', href: STORE.telegram, external: true },
+    { icon: UserCheck, title: 'Telegram Admin', value: STORE.telegramAdminUsername, href: STORE.telegramAdmin, external: true },
+    { icon: Instagram, title: 'Instagram', value: `@${STORE.instagramUsername}`, href: STORE.instagram, external: true },
     { icon: Clock, title: t('contact.hours'), value: STORE.hours },
   ]
 
@@ -96,7 +99,14 @@ export default function Contact() {
               <div>
                 <p className="text-white/45 text-xs uppercase tracking-wider mb-1">{title}</p>
                 {href ? (
-                  <a href={href} className="text-white font-medium hover:text-teal transition-colors">{value}</a>
+                  <a
+                    href={href}
+                    target={href.startsWith('http') ? '_blank' : undefined}
+                    rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    className="text-white font-medium hover:text-teal transition-colors"
+                  >
+                    {value}
+                  </a>
                 ) : (
                   <p className="text-white font-medium">{value}</p>
                 )}

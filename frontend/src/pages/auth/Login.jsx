@@ -70,7 +70,7 @@ const Login = () => {
               <Zap size={22} className="text-[#ffffff] fill-white" />
             </div>
             <div>
-              <div className="font-extrabold text-lg text-[#ffffff]">IoT Market</div>
+              <div className="font-extrabold text-lg text-[#ffffff]">Elektronikachi</div>
               <div className="text-[11px] text-[#94a3b8] uppercase tracking-widest">{t('auth.smart_devices')}</div>
             </div>
           </div>

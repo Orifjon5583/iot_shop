@@ -13,7 +13,7 @@
     "elements": "element"
   },
   "brand": {
-    "title": "XonTeam Market",
+    "title": "Elektronikachi",
     "tagline": "Smart Devices"
   },
   "nav": {
@@ -35,7 +35,7 @@
     "catalog": "Katalogni ko'rish"
   },
   "slides": {
-    "badge": "IoT Market",
+    "badge": "Elektronikachi",
     "s1_title": "IoT va mikroelektronika",
     "s1_sub": "Arduino, ESP32, Raspberry Pi — professional darajada",
     "s1_cta": "Mahsulotlarni ko'rish",
@@ -139,29 +139,29 @@
   },
   "about_sec": {
     "label": "Biz haqimizda",
-    "title": "IoT Market haqida",
-    "desc": "2019-yildan beri Xorazm viloyatida Arduino, ESP32, Raspberry Pi, sensorlar va smart home yechimlarini yetkazib beramiz. O'quv markazlari, startaplar va usta-hunarmandlar uchun ishonchli hamkor.",
-    "point1": "120+ turdagi IoT mahsulot",
-    "point2": "Urganchda tez yetkazib berish",
+    "title": "Elektronikachi haqida",
+    "desc": "O'zbekistonda Arduino, ESP32, Raspberry Pi, sensorlar va aqlli qurilmalar yechimlarini yetkazib beramiz. O'quv markazlari, startaplar va usta-hunarmandlar uchun ishonchli hamkor.",
+    "point1": "120+ turdagi elektronika va IoT mahsulotlari",
+    "point2": "Tez va ishonchli yetkazib berish",
     "point3": "24/7 onlayn maslahat",
     "more": "Batafsil"
   },
   "about": {
-    "intro": "IoT Market — Xorazm viloyatidagi eng yirik IoT va mikroelektronika do'koni. Biz Arduino, ESP, Raspberry Pi, sensorlar, motorlar va aqlli uy qurilmalarini bir joyda taklif qilamiz.",
+    "intro": "Elektronikachi — O'zbekistondagi eng yirik elektronika va mikroelektronika do'koni. Biz Arduino, ESP, Raspberry Pi, sensorlar, motorlar va aqlli uy qurilmalarini bir joyda taklif qilamiz.",
     "mission_title": "Bizning missiyamiz",
-    "mission_desc": "IoT texnologiyalarini O'zbekistonning har bir hududiga yetkazish — qulay narx, sifatli mahsulot va professional maslahat bilan.",
-    "story": "Do'konimiz dastlab o'quvchilar va dasturchilar uchun kichik laboratoriya sifatida ochilgan. Bugun minglab mijozlar loyihalarini biz bilan qurishadi: smart uy, robototexnika, agro-monitoring va sanoat IoT.",
+    "mission_desc": "Elektronika va IoT texnologiyalarini O'zbekistonning har bir hududiga yetkazish — qulay narx, sifatli mahsulot va professional maslahat bilan.",
+    "story": "Do'konimiz dastlab o'quvchilar va dasturchilar uchun kichik laboratoriya sifatida ochilgan. Bugun minglab mijozlar loyihalarini biz bilan qurishadi: smart uy, robototexnika, agro-monitoring va elektronika.",
     "values_title": "Nima uchun bizni tanlashadi",
     "value_quality_title": "Sifat kafolati",
     "value_quality_desc": "Faqat tekshirilgan brendlar va original komponentlar. Har bir mahsulot qadoqda va kafolat bilan.",
     "value_delivery_title": "Tez yetkazish",
-    "value_delivery_desc": "Xorazm va atrofdagi hududlarga 1–3 kun ichida. Buyurtma holatini kuzatish mumkin.",
+    "value_delivery_desc": "O'zbekiston bo'ylab tezkor yetkazib berish. Buyurtma holatini kuzatish mumkin.",
     "value_support_title": "24/7 qo'llab-quvvatlash",
     "value_support_desc": "Telegram, telefon va onlayn chat orqali texnik yordam — loyiha tanlashdan tortib ulashgacha.",
     "value_innovation_title": "Innovatsiya",
-    "value_innovation_desc": "Yangi ESP32-S3, Matter, Zigbee va boshqa zamonaviy protokollar doim katalogda.",
+    "value_innovation_desc": "Yangi ESP32-S3, Matter, Zigbee va boshqa zamonaviy modullar doim katalogda.",
     "location_title": "Biz qayerdamiz",
-    "location_desc": "Urganch shahridagi do'konimizda mahsulotlarni ko'rib, sinab olishingiz mumkin. Xaritada aniq manzil ko'rsatilgan.",
+    "location_desc": "Biz butun O'zbekiston bo'ylab sifatli xizmat ko'rsatamiz va tez yetkazib beramiz.",
     "stat_products": "Mahsulotlar",
     "stat_brands": "Brendlar",
     "stat_clients": "Mijozlar",
@@ -172,7 +172,7 @@
     "section_desc": "Savolingiz bormi? Hoziroq yozing — operatorlarimiz tez orada javob beradi.",
     "title": "Onlayn yordam",
     "online": "Onlayn — javob beramiz",
-    "welcome": "Assalomu alaykum! IoT Market 24/7 chatiga xush kelibsiz. Qanday yordam bera olamiz?",
+    "welcome": "Assalomu alaykum! Elektronikachi 24/7 chatiga xush kelibsiz. Qanday yordam bera olamiz?",
     "placeholder": "Xabaringizni yozing...",
     "send": "Yuborish"
   },
@@ -197,10 +197,10 @@
     "info": "Ma'lumot",
     "cats": "Kategoriyalar",
     "contacts": "Kontaktlar",
-    "address": "Xorazm vil., Urganch sh., Al-Xorazmiy ko'chasi, 45",
-    "phone": "+998 91 234 56 78",
+    "address": "O'zbekiston bo'ylab yetkazib berish",
+    "phone": "+998 99 668 99 69",
     "rights": "Barcha huquqlar himoyalangan",
-    "region_desc": "professional IoT do'koni"
+    "region_desc": "professional elektronika va do'koni"
   },
   "auth": {
     "login": "Kirish",

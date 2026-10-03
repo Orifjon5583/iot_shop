@@ -74,7 +74,7 @@ export default function HeroSlider() {
                       className="max-w-2xl"
                     >
                       <span className="inline-block mb-4 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/90 border border-white/25 rounded-full bg-black/30 backdrop-blur-md">
-                        IOT Market · {i + 1}/{banners.length}
+                        Elektronikachi · {i + 1}/{banners.length}
                       </span>
                       <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.1] mb-4 drop-shadow-lg">
                         {banner.title}

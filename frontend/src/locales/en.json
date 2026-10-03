@@ -13,7 +13,7 @@
     "elements": "items"
   },
   "brand": {
-    "title": "IoT Market",
+    "title": "Elektronikachi",
     "tagline": "Smart Devices"
   },
   "nav": {
@@ -35,7 +35,7 @@
     "catalog": "Browse catalog"
   },
   "slides": {
-    "badge": "IoT Market",
+    "badge": "Elektronikachi",
     "s1_title": "IoT & microelectronics",
     "s1_sub": "Arduino, ESP32, Raspberry Pi — professional grade",
     "s1_cta": "View products",
@@ -139,29 +139,29 @@
   },
   "about_sec": {
     "label": "About us",
-    "title": "About IoT Market",
-    "desc": "Since 2019 we supply Arduino, ESP32, Raspberry Pi, sensors and smart home gear in Khorezm. A trusted partner for schools, startups and makers.",
-    "point1": "120+ IoT products",
-    "point2": "Fast delivery in Urgench",
+    "title": "About Elektronikachi",
+    "desc": "Supplying Arduino, ESP32, Raspberry Pi, sensors and electronics across Uzbekistan. A trusted partner for schools, startups and makers.",
+    "point1": "120+ electronics & IoT products",
+    "point2": "Fast delivery across Uzbekistan",
     "point3": "24/7 online advice",
     "more": "Learn more"
   },
   "about": {
-    "intro": "IoT Market is the largest IoT and electronics store in Khorezm. We offer Arduino, ESP, Raspberry Pi, sensors, motors and smart home devices in one place.",
+    "intro": "Elektronikachi is the leading electronics and microelectronics store in Uzbekistan. We offer Arduino, ESP, Raspberry Pi, sensors, motors and smart devices in one place.",
     "mission_title": "Our mission",
-    "mission_desc": "Deliver IoT technology across Uzbekistan — fair prices, quality parts and expert guidance.",
-    "story": "We started as a small lab for students and developers. Today thousands of customers build smart homes, robotics, agro-monitoring and industrial IoT with us.",
+    "mission_desc": "Deliver cutting-edge technology across Uzbekistan — fair prices, quality parts and expert guidance.",
+    "story": "We started as a small lab for students and developers. Today thousands of customers build smart systems, robotics, and custom electronics with us.",
     "values_title": "Why choose us",
     "value_quality_title": "Quality guarantee",
     "value_quality_desc": "Verified brands and genuine components. Every item is packaged with warranty.",
     "value_delivery_title": "Fast delivery",
-    "value_delivery_desc": "1–3 days in Khorezm and nearby regions. Track your order status online.",
+    "value_delivery_desc": "Fast delivery across Uzbekistan. Track your order status online.",
     "value_support_title": "24/7 support",
     "value_support_desc": "Technical help via Telegram, phone and live chat — from part selection to wiring.",
     "value_innovation_title": "Innovation",
     "value_innovation_desc": "Latest ESP32-S3, Matter, Zigbee and modern protocols always in stock.",
-    "location_title": "Visit us",
-    "location_desc": "See and test products at our Urgench store. Exact location on the map below.",
+    "location_title": "Coverage",
+    "location_desc": "Providing high quality products and fast delivery across Uzbekistan.",
     "stat_products": "Products",
     "stat_brands": "Brands",
     "stat_clients": "Clients",
@@ -172,7 +172,7 @@
     "section_desc": "Have a question? Write now — our team will reply shortly.",
     "title": "Online support",
     "online": "Online — we reply",
-    "welcome": "Hello! Welcome to IoT Market 24/7 chat. How can we help?",
+    "welcome": "Hello! Welcome to Elektronikachi 24/7 chat. How can we help?",
     "placeholder": "Type your message...",
     "send": "Send"
   },
@@ -197,10 +197,10 @@
     "info": "Information",
     "cats": "Categories",
     "contacts": "Contacts",
-    "address": "Khorezm reg., Urgench, Al-Khorazmiy str. 45",
-    "phone": "+998 91 234 56 78",
+    "address": "Delivery across Uzbekistan",
+    "phone": "+998 99 668 99 69",
     "rights": "All rights reserved",
-    "region_desc": "professional IoT store"
+    "region_desc": "electronics and smart devices store"
   },
   "auth": {
     "login": "Login",

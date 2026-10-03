@@ -190,7 +190,7 @@ export default function ProductDetail() {
     <div className="max-w-[1440px] mx-auto px-4 md:px-6 pt-28 md:pt-32 pb-20">
       <SEO 
         title={product.name}
-        description={product.description?.substring(0, 160) || 'XonTeam Market mahsuloti'}
+        description={product.description?.substring(0, 160) || 'Elektronikachi mahsuloti'}
         image={images[0]}
         type="product"
         schemaData={{
@@ -198,15 +198,15 @@ export default function ProductDetail() {
           "@type": "Product",
           "name": product.name,
           "image": images,
-          "description": product.description || 'XonTeam Market mahsuloti',
+          "description": product.description || 'Elektronikachi mahsuloti',
           "sku": product.id,
           "brand": {
             "@type": "Brand",
-            "name": product.supplier || "XonTeam"
+            "name": product.supplier || "Elektronikachi"
           },
           "offers": {
             "@type": "Offer",
-            "url": `https://market.xonteam.uz/products/${product.id}`,
+            "url": typeof window !== 'undefined' ? `${window.location.origin}/products/${product.id}` : `/products/${product.id}`,
             "priceCurrency": "UZS",
             "price": product.price,
             "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
