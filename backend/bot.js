@@ -1,13 +1,22 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 const token = process.env.TELEGRAM_BOT_TOKEN || '8599837113:AAFrtE7-7g9f3aNFMZ7iW5VC-IVxPQIZZv8';
-const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+
+// Standart belgilangan Admin Chat ID lar ro'yxati
+const DEFAULT_CHAT_IDS = ['8768213837', '7471884325'];
+
+// Barcha admin chat ID larni olish
+const getAdminChatIds = () => {
+  const envIds = process.env.TELEGRAM_ADMIN_CHAT_ID
+    ? process.env.TELEGRAM_ADMIN_CHAT_ID.split(',').map(s => s.trim()).filter(Boolean)
+    : [];
+  return Array.from(new Set([...DEFAULT_CHAT_IDS, ...envIds]));
+};
 
 let bot = null;
 
 if (token) {
   try {
-    // Agar standalone ishga tushirilsa yoki polling belgilangan bo'lsa
     const isPolling = process.env.TELEGRAM_POLLING === 'true';
     bot = new TelegramBot(token, { polling: isPolling });
 
@@ -17,9 +26,9 @@ if (token) {
         bot.sendMessage(
           chatId,
           `Assalomu alaykum, <b>${msg.from.first_name || 'Admin'}</b>!\n\n` +
-          `Sizning Telegram Chat ID: <code>${chatId}</code>\n\n` +
-          `Ushbu Chat ID ni serverdagi <code>.env</code> fayliga <code>TELEGRAM_ADMIN_CHAT_ID=${chatId}</code> qilib kiriting. ` +
-          `Shundan so'ng saytdagi barcha buyurtmalar, murojaatlar va kiberxavfsizlik xabarlari shu yerga keladi!`,
+          `Siz Elektronikachi botiga muvaffaqiyatli ulandingiz.\n` +
+          `Sizning Chat ID: <code>${chatId}</code>\n\n` +
+          `Endi saytdagi barcha buyurtmalar va murojaatlar sizga avtomatik yuboriladi!`,
           { parse_mode: 'HTML' }
         );
       });
@@ -29,14 +38,28 @@ if (token) {
   }
 }
 
+// Barcha adminlarga xabar tarqatish (Broadcast)
+const broadcastToAdmins = async (message) => {
+  if (!bot) return;
+  const chatIds = getAdminChatIds();
+
+  await Promise.allSettled(
+    chatIds.map(async (chatId) => {
+      try {
+        await bot.sendMessage(chatId, message, { parse_mode: 'HTML' });
+      } catch (err) {
+        if (err.message && err.message.includes('chat not found')) {
+          console.warn(`[TELEGRAM] ChatId ${chatId} hali botga /start bosmagan. Iltimos, t.me/elektronikachi_bot ga kirib Start bosing.`);
+        } else {
+          console.error(`[TELEGRAM] ChatId ${chatId} ga xabar yuborishda xatolik:`, err.message);
+        }
+      }
+    })
+  );
+};
+
 // ─── 1. Yangi Buyurtma xabarnomasi ───────────────────────────────────────────
 const sendOrderNotification = async (order, items, user) => {
-  const targetChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || adminChatId;
-  if (!bot || !targetChatId) {
-    console.log('Telegram bot yoki TELEGRAM_ADMIN_CHAT_ID sozlanmagan. Buyurtma ID:', order.id);
-    return;
-  }
-
   try {
     const itemsList = (items || []).map(i => `▫️ <b>${i.name}</b> (x${i.quantity}) — ${Number(i.price).toLocaleString()} UZS`).join('\n');
     
@@ -61,7 +84,7 @@ ${itemsList || 'Tafsilot yo\'q'}
 ⏰ <i>Sana: ${new Date().toLocaleString('uz-UZ')}</i>
     `;
 
-    await bot.sendMessage(targetChatId, message, { parse_mode: 'HTML' });
+    await broadcastToAdmins(message);
   } catch (error) {
     console.error('Telegramga buyurtma xabarnomasini yuborishda xatolik:', error.message);
   }
@@ -69,9 +92,6 @@ ${itemsList || 'Tafsilot yo\'q'}
 
 // ─── 2. Yangi Murojaat (Aloqa formasi) xabarnomasi ───────────────────────────
 const sendMessageNotification = async (msgData) => {
-  const targetChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || adminChatId;
-  if (!bot || !targetChatId) return;
-
   try {
     const message = `
 📩 <b>SAYTDAN YANGI MUROJAAT KELDI!</b>
@@ -87,7 +107,7 @@ const sendMessageNotification = async (msgData) => {
 ⏰ <i>Sana: ${new Date().toLocaleString('uz-UZ')}</i>
     `;
 
-    await bot.sendMessage(targetChatId, message, { parse_mode: 'HTML' });
+    await broadcastToAdmins(message);
   } catch (error) {
     console.error('Telegramga murojaat xabarnomasini yuborishda xatolik:', error.message);
   }
@@ -95,9 +115,6 @@ const sendMessageNotification = async (msgData) => {
 
 // ─── 3. Kiberxavfsizlik va Hujum Ogohlantirishi ──────────────────────────────
 const sendSecurityAlert = async ({ ip, device, email, reason }) => {
-  const targetChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || adminChatId;
-  if (!bot || !targetChatId) return;
-
   try {
     const message = `
 🚨 <b>KIBERXAVFSIZLIK: HUJUM QAYTARILDI VA BLOKLANDI!</b>
@@ -111,7 +128,7 @@ const sendSecurityAlert = async ({ ip, device, email, reason }) => {
 ⏰ <i>Vaqt: ${new Date().toLocaleString('uz-UZ')}</i>
     `;
 
-    await bot.sendMessage(targetChatId, message, { parse_mode: 'HTML' });
+    await broadcastToAdmins(message);
   } catch (error) {
     console.error('Telegramga kiberxavfsizlik xabarini yuborishda xatolik:', error.message);
   }
@@ -122,4 +139,5 @@ module.exports = {
   sendOrderNotification,
   sendMessageNotification,
   sendSecurityAlert,
+  getAdminChatIds,
 };
