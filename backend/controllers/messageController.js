@@ -1,4 +1,5 @@
 const { prisma } = require('../config/db')
+const { sendMessageNotification } = require('../bot')
 
 // Barcha xabarlarni olish
 exports.getAllMessages = async (req, res) => {
@@ -74,6 +75,9 @@ exports.createMessage = async (req, res) => {
         message: message.trim(),
       },
     })
+
+    // Telegram botga xabarnoma yuborish
+    sendMessageNotification(newMessage);
 
     res.status(201).json({ success: true, data: newMessage })
   } catch (error) {

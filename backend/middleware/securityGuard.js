@@ -149,6 +149,17 @@ const securityShield = (req, res, next) => {
       path: req.path,
     });
 
+    // Telegram botga kiberxavfsizlik signali yuborish
+    try {
+      const { sendSecurityAlert } = require('../bot');
+      sendSecurityAlert({
+        ip,
+        device: deviceFp,
+        email: req.user?.email || emailFromBody,
+        reason,
+      });
+    } catch (e) {}
+
     return res.status(403).json({
       success: false,
       error: 'PERMANENTLY_BLOCKED',
