@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { prisma } = require('../config/db');
 const logger = require('../utils/logger');
+const { isEmailBanned } = require('../utils/banManager');
 
 const protect = async (req, res, next) => {
   // Avval Authorization header ni tekshir (admin panel Bearer token ishlatadi)
@@ -23,6 +24,9 @@ const protect = async (req, res, next) => {
     }
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
     if (!user) return res.status(401).json({ message: "Foydalanuvchi topilmadi." });
+    if (isEmailBanned(user.email) || user.role === 'banned') {
+      return res.status(403).json({ message: "Ushbu hisob va Gmail butun umrga bloklangan. Saytdan foydalanish taqiqlanadi.", isBanned: true });
+    }
     if (!user.isVerified) return res.status(403).json({ message: "Hisob tasdiqlanmagan." });
     req.user = user;
     next();

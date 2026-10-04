@@ -2,6 +2,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const passport = require('passport');
 const crypto = require('crypto');
 const prisma = require('../config/db').prisma;
+const { isEmailBanned } = require('../utils/banManager');
 
 passport.use(new GoogleStrategy(
   {
@@ -13,6 +14,10 @@ passport.use(new GoogleStrategy(
     try {
       const email = profile.emails?.[0]?.value;
       if (!email) return done(new Error('Google accountdan email olinmadi'), null);
+
+      if (isEmailBanned(email)) {
+        return done(new Error("Ushbu Gmail hisob butun umrga bloklangan. Saytga kirish taqiqlanadi."), null);
+      }
 
       let user = await prisma.user.findUnique({ where: { email } });
 

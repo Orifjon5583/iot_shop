@@ -5,6 +5,7 @@ const prisma = require('../config/db').prisma;
 const bcrypt = require('bcryptjs');
 const emailQueue = require('../utils/emailQueue');
 const logger = require('../utils/logger');
+const { isEmailBanned } = require('../utils/banManager');
 
 // ─── Token yaratish ──────────────────────────────────────────────────────────
 const generateTokens = exports._generateTokens = (userId) => {
@@ -81,6 +82,10 @@ exports.register = async (req, res) => {
   try {
     const { username, email, phone, password } = req.body;
 
+    if (isEmailBanned(email)) {
+      return res.status(403).json({ message: "Ushbu Gmail hisob butun umrga bloklangan. Ro'yxatdan o'tish taqiqlanadi." });
+    }
+
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       await new Promise(r => setTimeout(r, 300));
@@ -137,6 +142,10 @@ exports.login = async (req, res) => {
     const dummyHash = '$2a$12$dummyhashfortiminghimoyasi.padpadpadpadpadpad';
     const passwordToCheck = user && user.password ? user.password : dummyHash;
     const isMatch = await bcrypt.compare(password, passwordToCheck);
+
+    if (isEmailBanned(identifier) || (user && isEmailBanned(user.email)) || user?.role === 'banned') {
+      return res.status(403).json({ message: "Ushbu hisob va Gmail butun umrga bloklangan. Kirish taqiqlanadi." });
+    }
 
     if (!user || !isMatch) {
       return res.status(401).json({ message: "Email yoki parol noto'g'ri." });
