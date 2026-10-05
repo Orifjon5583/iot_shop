@@ -2,12 +2,11 @@
   "name": "iot-market",
   "version": "1.0.0",
   "scripts": {
-    "install:all": "npm install --prefix backend && npm install --prefix frontend && npm install --prefix admin-panel",
-    "dev": "concurrently --names \"BACKEND,FRONTEND,ADMIN\" --prefix-colors \"cyan,magenta,blue\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\" \"npm run dev --prefix admin-panel\"",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "dev:frontend": "npm run dev --prefix frontend",
     "dev:backend": "npm run dev --prefix backend",
-    "dev:admin": "npm run dev --prefix admin-panel",
-    "start": "concurrently --names \"BACKEND,FRONTEND,ADMIN\" --prefix-colors \"cyan,magenta,blue\" \"npm start --prefix backend\" \"npm run preview --prefix frontend\" \"npm run preview --prefix admin-panel\""
+    "start": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\" \"npm start --prefix backend\" \"npm run preview --prefix frontend\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
