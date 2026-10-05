@@ -8,8 +8,10 @@ import PopularCategories from '../components/home/PopularCategories'
 import PopularSections from '../components/home/PopularSections'
 import { PRODUCTS } from '../data'
 import ProductCard from '../components/ProductCard'
+import ProductSkeleton from '../components/common/ProductSkeleton'
 import SEO from '../components/common/SEO'
 import { STORE } from '../data/store'
+import api from '../api/axios'
 
 function Section({ title, children, linkTo, linkLabel, t }) {
   return (
@@ -39,8 +41,6 @@ function Section({ title, children, linkTo, linkLabel, t }) {
   )
 }
 
-import ProductSkeleton from '../components/common/ProductSkeleton'
-
 export default function Home() {
   const { t } = useTranslation()
   const [products, setProducts] = useState([])
@@ -49,11 +49,11 @@ export default function Home() {
   useEffect(() => {
     api.get('/products?limit=16&status=active')
       .then(res => {
-        const data = res.data?.data || res.data?.products || []
-        setProducts(data)
+        const data = res.data?.products || res.data?.data || []
+        setProducts(data.length > 0 ? data : PRODUCTS)
       })
       .catch(() => {
-        setProducts([])
+        setProducts(PRODUCTS)
       })
       .finally(() => setLoadingProducts(false))
   }, [])
